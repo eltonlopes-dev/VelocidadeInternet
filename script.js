@@ -16,8 +16,9 @@ const boxDownload = document.getElementById('box-download');
 const boxUpload = document.getElementById('box-upload');
 
 // Servidores públicos para o teste de velocidade
-const downloadUrl = "https://images.unsplash.com/photo-1541701494587-cb58502866ab"; 
-const downloadSizeInBytes = 5242880; // Imagem de 5MB
+// Servidores abertos e otimizados para testes de velocidade (Sem bloqueio de CORS)
+const downloadUrl = "https://fetch-speed.cloudflare.com/10mb"; 
+const downloadSizeInBytes = 10485760; // Arquivo exato de 10MB da Cloudflare
 const uploadUrl = "https://httpbin.org/post";
 
 // ---- FUNÇÃO PARA MOVER O PONTEIRO DINAMICAMENTE ----

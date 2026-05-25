@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Courier New', Courier, monospace; /* Tom tecnológico */
+    font-family: 'Courier New', Courier, monospace;
 }
 
 body {
@@ -73,7 +73,7 @@ h2 {
     border-radius: 50%;
     border-top-color: #00ffcc;
     border-right-color: #00ffcc;
-    transform: rotate(-135deg); /* Alinha o arco no topo */
+    transform: rotate(-135deg);
 }
 
 /* O Ponteiro Mecânico */
@@ -85,8 +85,8 @@ h2 {
     bottom: 50%;
     left: calc(50% - 2px);
     transform-origin: bottom center;
-    transform: rotate(-90deg); /* Posição inicial (Zero) */
-    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* Efeito elástico suave */
+    transform: rotate(-90deg);
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
     border-radius: 4px;
     box-shadow: 0 0 8px #00ffcc;
 }
@@ -121,6 +121,12 @@ h2 {
     margin-bottom: 1.5rem;
 }
 
+/* Faz o PING ocupar as duas colunas no topo do grid */
+#box-ping {
+    grid-column: span 2;
+    border-color: rgba(255, 0, 85, 0.3);
+}
+
 .stat-box {
     background: rgba(16, 42, 67, 0.6);
     border: 1px solid rgba(0, 255, 204, 0.2);
@@ -128,16 +134,12 @@ h2 {
     border-radius: 6px;
     display: flex;
     flex-direction: column;
-}
-
-.stat-box.highlighted {
-    grid-column: span 2;
-    border-color: rgba(255, 0, 85, 0.4);
+    transition: all 0.3s ease;
 }
 
 .stat-box.active-border {
-    border-color: #00ffcc;
-    box-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+    border-color: #00ffcc !important;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
 }
 
 .label {
@@ -156,6 +158,10 @@ h2 {
     color: #00ffcc;
 }
 
+#box-ping .value small {
+    color: #ff0055;
+}
+
 .bar {
     width: 100%;
     height: 4px;
@@ -172,11 +178,11 @@ h2 {
     transition: width 0.4s ease;
 }
 
-.stat-box.highlighted .progress {
+#box-ping .progress {
     background: #ff0055;
 }
 
-/* Botão Estilo Terminal Cyber */
+/* Botão Cyber */
 button {
     background: transparent;
     border: 2px solid #ff0055;

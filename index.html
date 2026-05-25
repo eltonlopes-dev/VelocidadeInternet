@@ -1,4 +1,30 @@
-<div class="stats-grid">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechForge - SpeedTest Monitor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="monitor-card">
+        <div class="header">
+            <div class="led"></div>
+            <h2>NETWORK MONITOR v2.6</h2>
+        </div>
+
+        <div class="gauge-wrapper">
+            <div class="gauge-arc">
+                <div class="needle" id="needle"></div>
+            </div>
+            <div class="gauge-center">
+                <span class="main-value" id="main-value">0.00</span>
+                <span class="main-unit" id="main-unit">Mbps</span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
             <div class="stat-box" id="box-ping">
                 <span class="label">LATÊNCIA (PING)</span>
                 <span class="value"><strong id="ping-text">0</strong> <small>ms</small></span>
@@ -16,7 +42,11 @@
                 <span class="value"><strong id="up-text">0.00</strong> <small>Mbps</small></span>
                 <div class="bar"><div class="progress" id="up-bar"></div></div>
             </div>
-        </div> <button id="start-btn">INICIAR VARREDURA</button>
-    </div> <script src="script.js"></script>
+        </div>
+
+        <button id="start-btn">INICIAR VARREDURA</button>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

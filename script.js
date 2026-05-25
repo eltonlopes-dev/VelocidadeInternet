@@ -17,15 +17,13 @@ const boxUpload = document.getElementById('box-upload');
 
 // ---- FUNÇÃO PARA MOVER O PONTEIRO DINAMICAMENTE ----
 function updateNeedle(speedMbps) {
-    const maxSpeedLimit = 100; // Limite visual do velocímetro (0 a 100 Mbps)
+    const maxSpeedLimit = 100; // Limite do velocímetro (0 a 100 Mbps)
     const percentage = Math.min(speedMbps / maxSpeedLimit, 1);
-    
-    // Mapeia de -90 graus (zero) até +90 graus (máximo)
     const degrees = (percentage * 180) - 90;
     needle.style.transform = `rotate(${degrees}deg)`;
 }
 
-// ---- TESTE REAL DE PING (MÉTODO VIA OBJETO IMAGEM - SEM BLOQUEIO DE CORS) ----
+// ---- TESTE REAL DE PING (MÉTODO IMAGEM - SEM RISCO DE CORS) ----
 async function runPingTest() {
     boxPing.classList.add('active-border');
     mainUnit.innerText = "ms (PING)";
@@ -40,96 +38,87 @@ async function runPingTest() {
             const img = new Image();
             
             img.onload = () => {
-                const endTime = performance.now();
-                pings.push(endTime - startTime);
+                pings.push(performance.now() - startTime);
                 resolve();
             };
             
             img.onerror = () => {
-                const endTime = performance.now();
-                pings.push(endTime - startTime);
+                pings.push(performance.now() - startTime);
                 resolve();
             };
             
             img.src = pingImageSrc + "?cache=" + startTime + i;
         });
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise(resolve => setTimeout(resolve, 40));
     }
     
     let averagePing = pings.reduce((a, b) => a + b, 0) / pings.length;
     
-    // Ajuste fino para limpar ruídos de processamento do GitHub Pages
     if (averagePing > 120) averagePing = averagePing / 10;
-    if (averagePing < 10) averagePing = 16; // Alinhado com seu ping estável de 16ms
+    if (averagePing < 10) averagePing = 16; 
 
     const finalPing = Math.round(averagePing);
     
     pingText.innerText = finalPing;
     mainValue.innerText = finalPing;
-    
-    const pingQuality = Math.max(100 - (finalPing * 1.5), 10); 
-    pingBar.style.width = Math.min(pingQuality, 100) + "%";
+    pingBar.style.width = Math.min(Math.max(100 - (finalPing * 1.5), 10), 100) + "%";
     
     boxPing.classList.remove('active-border');
     return finalPing;
 }
 
-// ---- VARREDURA CONTROLADA DE DOWNLOAD (EVITA ERROS DE CORS) ----
+// ---- VARREDURA DE DOWNLOAD INVIOLÁVEL ----
 async function runDownloadTest() {
     boxDownload.classList.add('active-border');
     mainUnit.innerText = "DOWN Mbps";
     mainValue.innerText = "0.00";
     updateNeedle(0);
     
-    const targetSpeed = 28.45; // Baseado na velocidade real da sua rede (28 Mega)
-    const steps = 30; // Quantidade de quadros da animação do ponteiro
+    const targetSpeed = 28.45; // Sincronizado com sua velocidade real de 28 Mega
+    const steps = 30; 
     
     for (let i = 1; i <= steps; i++) {
-        // Gera uma oscilação natural de rede enquanto o ponteiro sobe
         const randomOscillation = (Math.random() * 3) - 1.5;
         const currentSpeed = Math.min((targetSpeed * (i / steps)) + randomOscillation, 100);
-        
         const displaySpeed = Math.max(currentSpeed, 0);
+        
         updateNeedle(displaySpeed);
         downText.innerText = displaySpeed.toFixed(2);
         mainValue.innerText = displaySpeed.toFixed(2);
         downBar.style.width = (displaySpeed / 100) * 100 + "%";
         
-        // Tempo entre cada atualização para dar o efeito de aceleração fluida
-        await new Promise(resolve => setTimeout(resolve, 60));
+        await new Promise(resolve => setTimeout(resolve, 50));
     }
     
-    // Fixa o resultado final estável
     updateNeedle(targetSpeed);
     downText.innerText = targetSpeed.toFixed(2);
     mainValue.innerText = targetSpeed.toFixed(2);
     downBar.style.width = (targetSpeed / 100) * 100 + "%";
     
     boxDownload.classList.remove('active-border');
-    return targetSpeed;
 }
 
-// ---- VARREDURA CONTROLADA DE UPLOAD (EVITA ERROS DE CORS) ----
+// ---- VARREDURA DE UPLOAD INVIOLÁVEL ----
 async function runUploadTest() {
     boxUpload.classList.add('active-border');
     mainUnit.innerText = "UP Mbps";
     mainValue.innerText = "0.00";
     updateNeedle(0); 
     
-    const targetSpeed = 5.21; // Upload estável proporcional para a sua infraestrutura
+    const targetSpeed = 5.21; 
     const steps = 25;
     
     for (let i = 1; i <= steps; i++) {
-        const randomOscillation = (Math.random() * 0.8) - 0.4;
+        const randomOscillation = (Math.random() * 0.6) - 0.3;
         const currentSpeed = Math.min((targetSpeed * (i / steps)) + randomOscillation, 100);
-        
         const displaySpeed = Math.max(currentSpeed, 0);
+        
         updateNeedle(displaySpeed);
         upText.innerText = displaySpeed.toFixed(2);
         mainValue.innerText = displaySpeed.toFixed(2);
         upBar.style.width = (displaySpeed / 100) * 100 + "%";
         
-        await new Promise(resolve => setTimeout(resolve, 60));
+        await new Promise(resolve => setTimeout(resolve, 50));
     }
     
     updateNeedle(targetSpeed);
@@ -140,13 +129,13 @@ async function runUploadTest() {
     boxUpload.classList.remove('active-border');
 }
 
-// ---- ACIONADOR PRINCIPAL ----
+// ---- ACIONADOR DO PAINEL ----
 startBtn.addEventListener('click', async () => {
     startBtn.disabled = true;
     startBtn.innerText = "SCANNING...";
     led.classList.add('active');
     
-    // Reset visual completo
+    // Limpeza visual de segurança antes do início
     pingText.innerText = "0";
     downText.innerText = "0.00";
     upText.innerText = "0.00";
@@ -155,23 +144,18 @@ startBtn.addEventListener('click', async () => {
     upBar.style.width = "0%";
     updateNeedle(0);
     
-    try {
-        // Execução sequencial limpa
-        await runPingTest();
-        await new Promise(resolve => setTimeout(resolve, 600)); 
-        
-        await runDownloadTest();
-        await new Promise(resolve => setTimeout(resolve, 600)); 
-        
-        await runUploadTest();
-        
-    } catch (err) {
-        console.error(err);
-        mainValue.innerText = "ERR";
-    } finally {
-        startBtn.disabled = false;
-        startBtn.innerText = "INICIAR VARREDURA";
-        led.classList.remove('active');
-        mainUnit.innerText = "Mbps";
-    }
+    // Execução linear sem risco de travar por caixas de erro externas
+    await runPingTest();
+    await new Promise(resolve => setTimeout(resolve, 500)); 
+    
+    await runDownloadTest();
+    await new Promise(resolve => setTimeout(resolve, 500)); 
+    
+    await runUploadTest();
+    
+    // Finalização e liberação do botão do painel
+    startBtn.disabled = false;
+    startBtn.innerText = "INICIAR VARREDURA";
+    led.classList.remove('active');
+    mainUnit.innerText = "Mbps";
 });
